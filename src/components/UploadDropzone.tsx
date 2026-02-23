@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
-export function UploadDropzone() {
+interface UploadDropzoneProps {
+  onFileSelected?: (file: File, preview: string) => void;
+}
+
+export function UploadDropzone({ onFileSelected }: UploadDropzoneProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -86,7 +90,14 @@ export function UploadDropzone() {
 
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
             {previews.map((src, i) => (
-              <div key={i} className="aspect-square rounded-lg overflow-hidden bg-muted">
+              <div
+                key={i}
+                className="aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer ring-2 ring-transparent hover:ring-primary/50 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFileSelected?.(files[i], src);
+                }}
+              >
                 <img src={src} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
               </div>
             ))}
